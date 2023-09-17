@@ -10,7 +10,6 @@ const App = () => {
     const iframe = useRef<any>();
 
     const [input, setInput] = useState("");
-    const [code, setCode] = useState("");
 
     const startService = async () => {
         ref.current = await esbuild.startService({
@@ -69,7 +68,6 @@ const App = () => {
             <div>
                 <button onClick={onClick}>Submit</button>
             </div>
-            <pre>{code}</pre>
             {/* sandbox no direct access between parent and child */}
             {/* allow-same-origin | allows direct access */}
             {/* allow-scripts | allows script execution */}
