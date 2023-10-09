@@ -1,11 +1,15 @@
+import "./preview.css";
+
 import { useEffect, useRef } from "react";
 
 interface PreviewProps {
-    code: string;
+  code: string;
 }
 const html = `
     <html>
-        <head></head>
+        <head>
+          <style>html { background-color: white; }</style>
+        </head>
         <body>
             <div id="root"></div>
             <script>
@@ -21,21 +25,32 @@ const html = `
             </script>
         </body>
     </html>
-`
+`;
 
-const Preview: React.FC<PreviewProps> = ({code}) => {
+const Preview: React.FC<PreviewProps> = ({ code }) => {
+  const iframeRef = useRef<any>();
 
-    const iframeRef = useRef<any>();
+  useEffect(() => {
+    iframeRef.current.srcdoc = html;
+    setTimeout(() => {
+      iframeRef.current.contentWindow.postMessage(code, "*");
+    }, 50);
+  }, [code]);
 
-    useEffect(() => {
-        iframeRef.current.srcdoc = html;
-        iframeRef.current.contentWindow.postMessage(code, "*")
-    },[code]);
-
-    {/* sandbox no direct access between parent and child */}
-    {/* allow-same-origin | allows direct access */}
-    {/* allow-scripts | allows script execution */}
-    return <iframe ref={iframeRef} sandbox="allow-scripts" src="/test.html" srcDoc={html}/>
-}
+  // {/* sandbox no direct access between parent and child */}
+  // {/* allow-same-origin | allows direct access */}
+  // {/* allow-scripts | allows script executions */}
+  return (
+    <div className='preview-wrapper'>
+      <iframe
+        title='title'
+        ref={iframeRef}
+        sandbox='allow-scripts'
+        src='/test.html'
+        srcDoc={html}
+      />
+    </div>
+  );
+};
 
 export default Preview;
