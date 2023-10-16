@@ -5,37 +5,43 @@ import Preview from "../components/preview";
 import bundle from "../bundler";
 
 import Resizeable from "./resizeable";
+import { Cell } from "../state";
+import { useActions } from "../hooks/use-actions";
 
-const CodeCell = () => {
-  const [input, setInput] = useState("");
-  const [code, setCode] = useState("");
-  const [err, setErr] = useState("");
+interface CodeCellProps {
+	cell: Cell;
+}
 
-  useEffect(() => {
-    let timer = setTimeout(async () => {
-      const output = await bundle(input);
-      setCode(output.code);
-      setErr(output.err);
-    }, 1000);
+const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
+	const [code, setCode] = useState("");
+	const [err, setErr] = useState("");
+	const { updateCell } = useActions();
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [input]);
+	useEffect(() => {
+		let timer = setTimeout(async () => {
+			const output = await bundle(cell.content);
+			setCode(output.code);
+			setErr(output.err);
+		}, 1000);
 
-  return (
-    <Resizeable direction='vertical'>
-      <div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
-        <Resizeable direction='horizontal'>
-          <CodeEditor
-            initialValue='const a = 1;'
-            onChange={(value) => setInput(value)}
-          />
-        </Resizeable>
-        <Preview code={code} err={err} />
-      </div>
-    </Resizeable>
-  );
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [cell.content]);
+
+	return (
+		<Resizeable direction='vertical'>
+			<div style={{ height: "100%", display: "flex", flexDirection: "row" }}>
+				<Resizeable direction='horizontal'>
+					<CodeEditor
+						initialValue={cell.content}
+						onChange={(value) => updateCell(cell.id, value)}
+					/>
+				</Resizeable>
+				<Preview code={code} err={err} />
+			</div>
+		</Resizeable>
+	);
 };
 
 export default CodeCell;
