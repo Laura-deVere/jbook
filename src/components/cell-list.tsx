@@ -12,17 +12,27 @@ const CellList: React.FC = () => {
 
 	const renderedCells = cells.map((cell) => (
 		<React.Fragment key={cell.id}>
-			<AddCell nextCellId={cell.id} />
+			<AddCell previousCellId={cell.id} />
 			<CellListItem cell={cell} />
 		</React.Fragment>
 	));
 
+	// renderedCells.push(
+	// 	<AddCell
+	// 		key={Math.random()}
+	// 		forceVisible={cells.length === 0}
+	// 		previousCellId={null}
+	// 	/>
+	// );
+
 	return (
 		<div>
+			<AddCell
+				key={Math.random()}
+				forceVisible={cells.length === 0}
+				previousCellId={null}
+			/>
 			{renderedCells}
-			<div className={cells.length === 0 ? "force-visiible" : ""}>
-				<AddCell forceVisible={cells.length === 0} nextCellId={null} />
-			</div>
 		</div>
 	);
 };
